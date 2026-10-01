@@ -11,7 +11,13 @@ from src.books.service import BookService
 from src.db.main import get_session
 from src.errors import BookNotFound
 
-book_router = APIRouter(dependencies=[Depends(RoleChecker(["admin", "user"]))])
+book_router = APIRouter(
+    responses={
+        403: {"description": "Access token, verification or permitted role required"},
+        404: {"description": "Requested resource does not exist"},
+    },
+    dependencies=[Depends(RoleChecker(["admin", "user"]))],
+)
 book_service = BookService()
 access_token_bearer = AccessTokenBearer()
 

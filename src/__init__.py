@@ -32,7 +32,25 @@ version = "v1"
 
 app = FastAPI(
     title="Bookly",
-    description="A REST API for a book review web service",
+    description="Book CRUD with authenticated creators, author-owned reviews and shared tags. Verified users/admins access business routes. JWT login, refresh and per-token logout are supported. Verification and password recovery mail is queued to a local sandbox worker.",
+    openapi_tags=[
+        {
+            "name": "auth",
+            "description": "Account registration, tokens, verification and password recovery.",
+        },
+        {
+            "name": "books",
+            "description": "Persistent book catalog and creator relationships.",
+        },
+        {
+            "name": "reviews",
+            "description": "Book reviews; only the author can delete a review.",
+        },
+        {
+            "name": "tags",
+            "description": "Shared book categories and idempotent attachment.",
+        },
+    ],
     version=version,
     lifespan=life_span,
 )

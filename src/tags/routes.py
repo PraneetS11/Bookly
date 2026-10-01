@@ -10,7 +10,13 @@ from src.db.main import get_session
 from .schemas import TagAddModel, TagCreateModel, TagModel
 from .service import TagService
 
-tags_router = APIRouter(dependencies=[Depends(RoleChecker(["user", "admin"]))])
+tags_router = APIRouter(
+    responses={
+        403: {"description": "Access token, verification or permitted role required"},
+        404: {"description": "Requested resource does not exist"},
+    },
+    dependencies=[Depends(RoleChecker(["user", "admin"]))],
+)
 service = TagService()
 
 

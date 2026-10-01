@@ -10,7 +10,13 @@ from src.db.models import User
 from .schemas import ReviewCreateModel, ReviewModel
 from .service import ReviewService
 
-review_router = APIRouter(dependencies=[Depends(RoleChecker(["user", "admin"]))])
+review_router = APIRouter(
+    responses={
+        403: {"description": "Access token, verification or permitted role required"},
+        404: {"description": "Requested resource does not exist"},
+    },
+    dependencies=[Depends(RoleChecker(["user", "admin"]))],
+)
 service = ReviewService()
 
 

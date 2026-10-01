@@ -20,6 +20,20 @@ class Book(BaseModel):
 
 
 class BookCreateModel(BaseModel):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "title": "Fictional Field Guide",
+                    "author": "Demo Author",
+                    "publisher": "Demo Press",
+                    "published_date": "2024-01-01",
+                    "page_count": 100,
+                    "language": "English",
+                }
+            ]
+        }
+    )
     title: str
     author: str
     publisher: str

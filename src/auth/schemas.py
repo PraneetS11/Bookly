@@ -5,6 +5,19 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class UserCreateModel(BaseModel):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "first_name": "Demo",
+                    "last_name": "Reader",
+                    "username": "reader",
+                    "email": "reader@example.com",
+                    "password": "fictional-example-password",
+                }
+            ]
+        }
+    )
     first_name: str = Field(max_length=25)
     last_name: str = Field(max_length=25)
     username: str = Field(max_length=8)
