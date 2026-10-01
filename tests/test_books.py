@@ -5,13 +5,14 @@ from uuid import uuid4
 
 # Unit tests do not connect to this URL or require the developer's .env.
 os.environ.setdefault("DATABASE_URL", "postgresql+asyncpg://test:test@localhost/test")
+os.environ.setdefault("JWT_SECRET_KEY", "bookly-unit-test-secret-not-for-production")
 
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.books.models import Book
-from src.books.routes import book_router
+from src.books.routes import access_token_bearer, book_router
 from src.books.schemas import BookCreateModel, BookUpdateModel
 from src.books.service import BookService
 from src.db.main import get_session
@@ -32,6 +33,7 @@ class BookRoutesTests(unittest.TestCase):
         self.session.exec.return_value = MagicMock()
         self.app = FastAPI()
         self.app.include_router(book_router, prefix="/api/v1/books")
+        self.app.dependency_overrides[access_token_bearer] = lambda: {}
 
         async def override():
             yield self.session

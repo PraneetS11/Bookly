@@ -10,3 +10,7 @@ httpx==0.28.1
 passlib==1.7.4
 # Retain the chapter's Passlib/bcrypt API with a compatible backend.
 bcrypt==4.0.1
+
+# Chapter 9 signed tokens and async Redis blocklist.
+PyJWT==2.15.1
+redis==6.4.0

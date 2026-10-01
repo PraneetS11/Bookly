@@ -34,3 +34,8 @@ class UserModel(BaseModel):
     email: str
     is_verified: bool
     created_at: datetime
+
+
+class UserLoginModel(BaseModel):
+    email: str
+    password: str = Field(min_length=6, max_length=72, repr=False)

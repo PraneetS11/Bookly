@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from unittest.mock import AsyncMock, MagicMock, patch
 
 os.environ.setdefault("DATABASE_URL", "postgresql+asyncpg://test:test@localhost/test")
+os.environ.setdefault("JWT_SECRET_KEY", "bookly-unit-test-secret-not-for-production")
 
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
