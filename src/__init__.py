@@ -8,6 +8,7 @@ from src.books.routes import book_router
 from src.config import Config
 from src.db.main import engine
 from src.errors import register_error_handlers
+from src.middleware import register_middleware
 
 
 @asynccontextmanager
@@ -45,3 +46,5 @@ app.include_router(review_router, prefix="/api/v1/reviews", tags=["reviews"])
 app.include_router(tags_router, prefix="/api/v1/tags", tags=["tags"])
 
 register_error_handlers(app)
+
+register_middleware(app, Config)
