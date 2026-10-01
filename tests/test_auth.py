@@ -38,6 +38,9 @@ class PasswordTests(unittest.TestCase):
 
 class SignupTests(unittest.TestCase):
     def setUp(self):
+        mail_patch = patch("src.auth.routes.send_account_link", new_callable=AsyncMock)
+        mail_patch.start()
+        self.addCleanup(mail_patch.stop)
         self.session = AsyncMock(spec=AsyncSession)
         self.session.exec.return_value = MagicMock()
         self.session.exec.return_value.first.return_value = None

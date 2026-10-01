@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from redis.asyncio import Redis
 
+from src.auth.email_routes import router as email_router
 from src.auth.routes import auth_router
 from src.books.routes import book_router
 from src.config import Config
@@ -48,3 +49,5 @@ app.include_router(tags_router, prefix="/api/v1/tags", tags=["tags"])
 register_error_handlers(app)
 
 register_middleware(app, Config)
+
+app.include_router(email_router, prefix="/api/v1/auth", tags=["auth"])

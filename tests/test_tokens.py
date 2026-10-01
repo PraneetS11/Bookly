@@ -26,6 +26,7 @@ from src.db.redis import PREFIX
 class TokenTests(unittest.TestCase):
     def setUp(self):
         self.user = User(
+            is_verified=True,
             uid=uuid4(),
             email="demo@example.com",
             username="demo",

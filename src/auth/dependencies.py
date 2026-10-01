@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import Depends, Request
+from fastapi import Depends, HTTPException, Request
 from fastapi.security import HTTPBearer
 from redis.exceptions import RedisError
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -73,6 +73,8 @@ class RoleChecker:
         self.allowed_roles = frozenset(allowed_roles)
 
     async def __call__(self, user: User = Depends(get_current_user)) -> User:
+        if not user.is_verified:
+            raise HTTPException(403, "Verify your email before using this action")
         if user.role not in self.allowed_roles:
             raise InsufficientPermission()
         return user

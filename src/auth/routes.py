@@ -6,6 +6,7 @@ from redis.exceptions import RedisError
 from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette.concurrency import run_in_threadpool
 
+from src.auth.email_routes import send_account_link, settings_for
 from src.auth.schemas import UserBooksModel
 from src.db.main import get_session
 from src.db.redis import add_jti_to_blocklist
@@ -34,6 +35,7 @@ REFRESH_TOKEN_EXPIRY = timedelta(days=2)
 )
 async def create_user_account(
     user_data: UserCreateModel,
+    request: Request,
     session: AsyncSession = Depends(get_session),
 ):
     if await user_service.user_exists(
@@ -42,10 +44,9 @@ async def create_user_account(
     ):
         raise UserAlreadyExists()
 
-    return await user_service.create_user(
-        user_data,
-        session,
-    )
+    user = await user_service.create_user(user_data, session)
+    await send_account_link(user, settings_for(request), "verify")
+    return user
 
 
 @auth_router.post("/login")

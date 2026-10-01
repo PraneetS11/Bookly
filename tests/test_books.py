@@ -36,7 +36,9 @@ class BookRoutesTests(unittest.TestCase):
         self.app = FastAPI()
         self.app.include_router(book_router, prefix="/api/v1/books")
         self.app.dependency_overrides[access_token_bearer] = lambda: {}
-        self.app.dependency_overrides[get_current_user] = lambda: User(role="user")
+        self.app.dependency_overrides[get_current_user] = lambda: User(
+            is_verified=True, role="user"
+        )
 
         async def override():
             yield self.session
