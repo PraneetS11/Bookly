@@ -9,7 +9,7 @@ from starlette.concurrency import run_in_threadpool
 from src.db.main import get_session
 from src.db.redis import add_jti_to_blocklist
 
-from .dependencies import AccessTokenBearer, RefreshTokenBearer
+from .dependencies import AccessTokenBearer, RefreshTokenBearer, RoleChecker
 from .schemas import UserCreateModel, UserLoginModel, UserModel
 from .service import UserService
 from .utils import create_access_token, verify_password
@@ -54,7 +54,7 @@ async def login_user(
         session,
     )
 
-    if user is None:
+    if user is None or not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Invalid email or password",
@@ -104,7 +104,11 @@ async def get_new_access_token(
     session: AsyncSession = Depends(get_session),
 ):
     user = await user_service.get_user_by_email(token_details["user"]["email"], session)
-    if user is None or str(user.uid) != token_details["user"]["uid"]:
+    if (
+        user is None
+        or not user.is_active
+        or str(user.uid) != token_details["user"]["uid"]
+    ):
         raise HTTPException(403, "Invalid or expired token")
     return {
         "access_token": create_access_token({"email": user.email, "uid": str(user.uid)})
@@ -122,3 +126,8 @@ async def revoke_token(
     except RedisError:
         raise HTTPException(503, "Authentication service unavailable") from None
     return {"message": "Logged Out Successfully"}
+
+
+@auth_router.get("/me", response_model=UserModel)
+async def current_account(user=Depends(RoleChecker(["admin", "user"]))):
+    return user

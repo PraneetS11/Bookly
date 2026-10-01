@@ -4,12 +4,12 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from src.auth.dependencies import AccessTokenBearer
+from src.auth.dependencies import AccessTokenBearer, RoleChecker
 from src.books.schemas import Book, BookCreateModel, BookUpdateModel
 from src.books.service import BookService
 from src.db.main import get_session
 
-book_router = APIRouter()
+book_router = APIRouter(dependencies=[Depends(RoleChecker(["admin", "user"]))])
 book_service = BookService()
 access_token_bearer = AccessTokenBearer()
 

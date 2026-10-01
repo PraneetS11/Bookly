@@ -11,6 +11,8 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from src.auth.dependencies import get_current_user
+from src.auth.models import User
 from src.books.models import Book
 from src.books.routes import access_token_bearer, book_router
 from src.books.schemas import BookCreateModel, BookUpdateModel
@@ -34,6 +36,7 @@ class BookRoutesTests(unittest.TestCase):
         self.app = FastAPI()
         self.app.include_router(book_router, prefix="/api/v1/books")
         self.app.dependency_overrides[access_token_bearer] = lambda: {}
+        self.app.dependency_overrides[get_current_user] = lambda: User(role="user")
 
         async def override():
             yield self.session

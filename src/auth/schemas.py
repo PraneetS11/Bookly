@@ -32,6 +32,8 @@ class UserModel(BaseModel):
     first_name: str | None
     last_name: str | None
     email: str
+    role: str = "user"
+    is_active: bool = True
     is_verified: bool
     created_at: datetime
 

@@ -1,8 +1,8 @@
-from datetime import datetime
 import uuid
+from datetime import datetime
 
 import sqlalchemy.dialects.postgresql as pg
-from sqlalchemy import Column, func
+from sqlalchemy import Boolean, Column, String, func
 from sqlmodel import Field, SQLModel
 
 
@@ -15,9 +15,7 @@ class User(SQLModel, table=True):
             pg.UUID(as_uuid=True),
             primary_key=True,
             nullable=False,
-            info={
-                "description": "Unique identifier for the user account"
-            },
+            info={"description": "Unique identifier for the user account"},
         ),
     )
 
@@ -39,6 +37,13 @@ class User(SQLModel, table=True):
     )
 
     email: str
+
+    role: str = Field(
+        default="user", sa_column=Column(String, nullable=False, server_default="user")
+    )
+    is_active: bool = Field(
+        default=True, sa_column=Column(Boolean, nullable=False, server_default="true")
+    )
 
     password_hash: str = Field(exclude=True)
 

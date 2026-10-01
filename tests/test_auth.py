@@ -62,7 +62,17 @@ class SignupTests(unittest.TestCase):
         data = response.json()
         self.assertEqual(
             set(data),
-            {"uid", "username", "first_name", "last_name", "email", "is_verified", "created_at"},
+            {
+                "uid",
+                "username",
+                "first_name",
+                "last_name",
+                "email",
+                "is_verified",
+                "created_at",
+                "role",
+                "is_active",
+            },
         )
         self.assertEqual(data["first_name"], "Demo")
         self.assertFalse(data["is_verified"])
@@ -97,10 +107,16 @@ class SignupTests(unittest.TestCase):
         ]
         for body in invalid:
             with self.subTest(fields=list(body)):
-                self.assertEqual(self.client.post("/api/v1/auth/signup", json=body).status_code, 422)
+                self.assertEqual(
+                    self.client.post("/api/v1/auth/signup", json=body).status_code, 422
+                )
         self.session.add.assert_not_called()
-        self.assertEqual(UserCreateModel(**dict(VALUES, password="abcdef")).password, "abcdef")
-        self.assertEqual(len(UserCreateModel(**dict(VALUES, password="é" * 36)).password), 36)
+        self.assertEqual(
+            UserCreateModel(**dict(VALUES, password="abcdef")).password, "abcdef"
+        )
+        self.assertEqual(
+            len(UserCreateModel(**dict(VALUES, password="é" * 36)).password), 36
+        )
 
     def test_client_cannot_set_verification_or_password_hash(self):
         response = self.client.post(
@@ -109,7 +125,9 @@ class SignupTests(unittest.TestCase):
         )
         self.assertEqual(response.status_code, 201)
         self.assertFalse(response.json()["is_verified"])
-        self.assertNotEqual(self.session.add.call_args.args[0].password_hash, "client-controlled")
+        self.assertNotEqual(
+            self.session.add.call_args.args[0].password_hash, "client-controlled"
+        )
 
     def test_openapi_has_public_response_schema(self):
         schema = self.client.get("/openapi.json").json()

@@ -33,6 +33,7 @@ class TokenTests(unittest.TestCase):
             created_at=datetime.now(timezone.utc),
         )
         self.session = AsyncMock(spec=AsyncSession)
+        self.session.get.return_value = self.user
         self.session.exec.return_value = MagicMock()
         self.session.exec.return_value.first.return_value = self.user
         self.session.exec.return_value.all.return_value = []
