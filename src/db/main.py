@@ -7,7 +7,7 @@ from src.config import Config
 
 engine = create_async_engine(
     Config.DATABASE_URL,
-    echo=True,
+    echo=False,  # Signup SQL parameters include password hashes.
     connect_args={
         "ssl": "require",
         # Avoid stale prepared statements through the development DB pooler.

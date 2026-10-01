@@ -40,7 +40,7 @@ class User(SQLModel, table=True):
 
     email: str
 
-    password_hash: str
+    password_hash: str = Field(exclude=True)
 
     created_at: datetime = Field(
         sa_column=Column(
