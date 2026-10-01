@@ -3,14 +3,13 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from src.books.routes import book_router
-from src.db.main import engine, init_db
+from src.db.main import engine
 
 
 @asynccontextmanager
 async def life_span(app: FastAPI):
     print("server is starting...")
     try:
-        await init_db()
         yield
     finally:
         await engine.dispose()
