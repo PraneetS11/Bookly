@@ -1,7 +1,7 @@
 from typing import List
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.auth.dependencies import AccessTokenBearer, RoleChecker, get_current_user
@@ -9,6 +9,7 @@ from src.auth.models import User
 from src.books.schemas import Book, BookCreateModel, BookDetailModel, BookUpdateModel
 from src.books.service import BookService
 from src.db.main import get_session
+from src.errors import BookNotFound
 
 book_router = APIRouter(dependencies=[Depends(RoleChecker(["admin", "user"]))])
 book_service = BookService()
@@ -63,10 +64,7 @@ async def get_book(
     )
 
     if book is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Book not found",
-        )
+        raise BookNotFound()
 
     return book
 
@@ -88,10 +86,7 @@ async def update_book(
     )
 
     if updated_book is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Book not found",
-        )
+        raise BookNotFound()
 
     return updated_book
 
@@ -111,9 +106,6 @@ async def delete_book(
     )
 
     if deleted_book is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Book not found",
-        )
+        raise BookNotFound()
 
     return None

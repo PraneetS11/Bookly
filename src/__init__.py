@@ -7,6 +7,7 @@ from src.auth.routes import auth_router
 from src.books.routes import book_router
 from src.config import Config
 from src.db.main import engine
+from src.errors import register_error_handlers
 
 
 @asynccontextmanager
@@ -42,3 +43,5 @@ from src.tags.routes import tags_router
 
 app.include_router(review_router, prefix="/api/v1/reviews", tags=["reviews"])
 app.include_router(tags_router, prefix="/api/v1/tags", tags=["tags"])
+
+register_error_handlers(app)

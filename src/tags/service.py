@@ -1,9 +1,9 @@
-from fastapi import HTTPException
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import select
 
 from src.db.models import Book, BookTag, Tag
+from src.errors import BookNotFound, TagAlreadyExists, TagNotFound
 
 
 class TagService:
@@ -13,7 +13,7 @@ class TagService:
     async def get_tag(self, tag_uid, session):
         tag = await session.get(Tag, tag_uid)
         if tag is None:
-            raise HTTPException(404, "Tag not found")
+            raise TagNotFound()
         return tag
 
     async def save(self, tag, session):
@@ -23,7 +23,7 @@ class TagService:
             await session.refresh(tag)
         except IntegrityError:
             await session.rollback()
-            raise HTTPException(409, "Tag name already exists") from None
+            raise TagAlreadyExists() from None
         except Exception:
             await session.rollback()
             raise
@@ -49,7 +49,7 @@ class TagService:
     async def add_tags_to_book(self, book_uid, data, session):
         book = await session.get(Book, book_uid)
         if book is None:
-            raise HTTPException(404, "Book not found")
+            raise BookNotFound()
         try:
             for item in data.tags:
                 new_tag = Tag(name=item.name)

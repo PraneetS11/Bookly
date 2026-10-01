@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse
 from redis.exceptions import RedisError
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -9,6 +9,12 @@ from starlette.concurrency import run_in_threadpool
 from src.auth.schemas import UserBooksModel
 from src.db.main import get_session
 from src.db.redis import add_jti_to_blocklist
+from src.errors import (
+    AuthenticationUnavailable,
+    InvalidCredentials,
+    InvalidToken,
+    UserAlreadyExists,
+)
 
 from .dependencies import AccessTokenBearer, RefreshTokenBearer, RoleChecker
 from .schemas import UserCreateModel, UserLoginModel, UserModel
@@ -34,10 +40,7 @@ async def create_user_account(
         user_data.email,
         session,
     ):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="User with email already exists",
-        )
+        raise UserAlreadyExists()
 
     return await user_service.create_user(
         user_data,
@@ -56,10 +59,7 @@ async def login_user(
     )
 
     if user is None or not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Invalid email or password",
-        )
+        raise InvalidCredentials()
 
     password_valid = await run_in_threadpool(
         verify_password,
@@ -68,10 +68,7 @@ async def login_user(
     )
 
     if not password_valid:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Invalid email or password",
-        )
+        raise InvalidCredentials()
 
     user_data = {
         "email": user.email,
@@ -110,7 +107,7 @@ async def get_new_access_token(
         or not user.is_active
         or str(user.uid) != token_details["user"]["uid"]
     ):
-        raise HTTPException(403, "Invalid or expired token")
+        raise InvalidToken()
     return {
         "access_token": create_access_token({"email": user.email, "uid": str(user.uid)})
     }
@@ -125,7 +122,7 @@ async def revoke_token(
             request.app.state.redis, token_details["jti"], token_details["exp"]
         )
     except RedisError:
-        raise HTTPException(503, "Authentication service unavailable") from None
+        raise AuthenticationUnavailable() from None
     return {"message": "Logged Out Successfully"}
 
 
