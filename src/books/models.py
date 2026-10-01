@@ -1,9 +1,9 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from uuid import UUID, uuid4
 
-from sqlalchemy import Column, DateTime
+from sqlalchemy import Column, Date, DateTime
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
-from sqlmodel import SQLModel, Field
+from sqlmodel import Field, SQLModel
 
 
 def utc_now() -> datetime:
@@ -25,7 +25,7 @@ class Book(SQLModel, table=True):
     title: str
     author: str
     publisher: str
-    published_date: str
+    published_date: date = Field(sa_column=Column(Date, nullable=False))
     page_count: int
     language: str
 
