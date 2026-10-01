@@ -41,3 +41,10 @@ class UserModel(BaseModel):
 class UserLoginModel(BaseModel):
     email: str
     password: str = Field(min_length=6, max_length=72, repr=False)
+
+
+from src.books.schemas import Book
+
+
+class UserBooksModel(UserModel):
+    books: list[Book] = []

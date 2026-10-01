@@ -26,10 +26,11 @@ class BookService:
         self,
         book_data: BookCreateModel,
         session: AsyncSession,
+        user_uid: UUID | None = None,
     ):
         book_data_dict = book_data.model_dump()
 
-        new_book = Book(**book_data_dict)
+        new_book = Book(**book_data_dict, user_uid=user_uid)
 
         try:
             session.add(new_book)
@@ -94,3 +95,11 @@ class BookService:
             raise
 
         return book_to_delete
+
+    async def get_user_books(self, user_uid: UUID, session: AsyncSession):
+        result = await session.exec(
+            select(Book)
+            .where(Book.user_uid == user_uid)
+            .order_by(desc(Book.created_at))
+        )
+        return result.all()

@@ -17,7 +17,9 @@ class UserService:
 
     async def create_user(self, user_data: UserCreateModel, session: AsyncSession):
         values = user_data.model_dump(exclude={"password"})
-        password_hash = await run_in_threadpool(generate_password_hash, user_data.password)
+        password_hash = await run_in_threadpool(
+            generate_password_hash, user_data.password
+        )
         new_user = User(**values, password_hash=password_hash)
         try:
             session.add(new_user)

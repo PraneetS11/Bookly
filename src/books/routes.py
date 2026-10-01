@@ -4,8 +4,9 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from src.auth.dependencies import AccessTokenBearer, RoleChecker
-from src.books.schemas import Book, BookCreateModel, BookUpdateModel
+from src.auth.dependencies import AccessTokenBearer, RoleChecker, get_current_user
+from src.auth.models import User
+from src.books.schemas import Book, BookCreateModel, BookDetailModel, BookUpdateModel
 from src.books.service import BookService
 from src.db.main import get_session
 
@@ -34,12 +35,14 @@ async def get_all_books(
 )
 async def create_book(
     book_data: BookCreateModel,
+    user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
     token_details: dict = Depends(access_token_bearer),
 ):
     new_book = await book_service.create_book(
         book_data,
         session,
+        user_uid=user.uid,
     )
 
     return new_book
@@ -47,7 +50,7 @@ async def create_book(
 
 @book_router.get(
     "/{book_uid}",
-    response_model=Book,
+    response_model=BookDetailModel,
 )
 async def get_book(
     book_uid: UUID,

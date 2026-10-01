@@ -6,6 +6,7 @@ from redis.exceptions import RedisError
 from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette.concurrency import run_in_threadpool
 
+from src.auth.schemas import UserBooksModel
 from src.db.main import get_session
 from src.db.redis import add_jti_to_blocklist
 
@@ -128,6 +129,6 @@ async def revoke_token(
     return {"message": "Logged Out Successfully"}
 
 
-@auth_router.get("/me", response_model=UserModel)
+@auth_router.get("/me", response_model=UserBooksModel)
 async def current_account(user=Depends(RoleChecker(["admin", "user"]))):
     return user
