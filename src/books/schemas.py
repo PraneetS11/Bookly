@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Book(BaseModel):
@@ -9,12 +9,12 @@ class Book(BaseModel):
 
     user_uid: UUID | None = None
     uid: UUID
-    title: str
-    author: str
-    publisher: str
+    title: str = Field(pattern=r"^[^\x00]*$")
+    author: str = Field(pattern=r"^[^\x00]*$")
+    publisher: str = Field(pattern=r"^[^\x00]*$")
     published_date: date
-    page_count: int
-    language: str
+    page_count: int = Field(ge=-2147483648, le=2147483647)
+    language: str = Field(pattern=r"^[^\x00]*$")
     created_at: datetime
     updated_at: datetime
 
@@ -34,20 +34,20 @@ class BookCreateModel(BaseModel):
             ]
         }
     )
-    title: str
-    author: str
-    publisher: str
+    title: str = Field(pattern=r"^[^\x00]*$")
+    author: str = Field(pattern=r"^[^\x00]*$")
+    publisher: str = Field(pattern=r"^[^\x00]*$")
     published_date: date
-    page_count: int
-    language: str
+    page_count: int = Field(ge=-2147483648, le=2147483647)
+    language: str = Field(pattern=r"^[^\x00]*$")
 
 
 class BookUpdateModel(BaseModel):
-    title: str
-    author: str
-    publisher: str
-    page_count: int
-    language: str
+    title: str = Field(pattern=r"^[^\x00]*$")
+    author: str = Field(pattern=r"^[^\x00]*$")
+    publisher: str = Field(pattern=r"^[^\x00]*$")
+    page_count: int = Field(ge=-2147483648, le=2147483647)
+    language: str = Field(pattern=r"^[^\x00]*$")
 
 
 from src.reviews.schemas import ReviewModel

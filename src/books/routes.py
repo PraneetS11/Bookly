@@ -13,6 +13,7 @@ from src.errors import BookNotFound
 
 book_router = APIRouter(
     responses={
+        400: {"description": "Malformed request body or invalid host"},
         403: {"description": "Access token, verification or permitted role required"},
         404: {"description": "Requested resource does not exist"},
     },

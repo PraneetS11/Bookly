@@ -1,0 +1,20 @@
+name: API checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m venv .venv
+      - run: .venv/bin/pip install -r requirements-dev.txt
+      - run: docker compose -p bookly-ch17-test -f compose.test.yaml up -d --wait
+      - run: RUN_INTEGRATION=1 .venv/bin/python -m pytest -q
+      - run: .venv/bin/python scripts/verify_isolated.py --contracts
+      - if: always()
+        run: docker compose -p bookly-ch17-test -f compose.test.yaml down

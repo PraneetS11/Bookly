@@ -1,0 +1,3 @@
+-r requirements.txt
+pytest==9.1.1
+schemathesis==4.28.0

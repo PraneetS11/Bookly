@@ -8,3 +8,6 @@ __pycache__/
 htmlcov/
 .env.*
 !.env.example
+
+.schemathesis/
+.hypothesis/

@@ -9,7 +9,7 @@ engine = create_async_engine(
     Config.DATABASE_URL,
     echo=False,  # Signup SQL parameters include password hashes.
     connect_args={
-        "ssl": "require",
+        "ssl": "require" if Config.database_ssl else False,
         # Avoid stale prepared statements through the development DB pooler.
         "statement_cache_size": 0,
         "prepared_statement_cache_size": 0,
