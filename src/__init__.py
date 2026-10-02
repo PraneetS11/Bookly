@@ -15,6 +15,7 @@ from src.middleware import register_middleware
 @asynccontextmanager
 async def life_span(app: FastAPI):
     print("server is starting...")
+    app.state.engine = engine
     app.state.redis = Redis.from_url(
         Config.REDIS_URL, socket_connect_timeout=2, socket_timeout=2
     )
@@ -69,3 +70,7 @@ register_error_handlers(app)
 register_middleware(app, Config)
 
 app.include_router(email_router, prefix="/api/v1/auth", tags=["auth"])
+
+from src.health import router as health_router
+
+app.include_router(health_router)

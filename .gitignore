@@ -11,3 +11,5 @@ htmlcov/
 
 .schemathesis/
 .hypothesis/
+
+.env.demo

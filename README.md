@@ -20,3 +20,5 @@ Run `.venv/bin/python -m unittest discover -s tests -q`. Stop foreground workers
 ## Limits
 
 Mail is queued and sent only to the local sandbox; API acceptance is not confirmed delivery. Recovery links expire but remain reusable until expiry and do not invalidate existing sessions. Refresh rotation, production delivery guarantees, public HTTPS hosting and a production security review are not implemented. Use fictional data. Development CORS/host settings are explicit in `.env.example`.
+
+Local containers, verified checks and pending public deployment: [Deployment](docs/DEPLOYMENT.md).

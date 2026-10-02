@@ -16,5 +16,6 @@ jobs:
       - run: docker compose -p bookly-ch17-test -f compose.test.yaml up -d --wait
       - run: RUN_INTEGRATION=1 .venv/bin/python -m pytest -q
       - run: .venv/bin/python scripts/verify_isolated.py --contracts
+      - run: docker build -t bookly-demo:ci .
       - if: always()
         run: docker compose -p bookly-ch17-test -f compose.test.yaml down
